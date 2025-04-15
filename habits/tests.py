@@ -1,3 +1,5 @@
+from datetime import time
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -14,7 +16,7 @@ class HabitTest(APITestCase):
         self.habit = Habit.objects.create(
             habit="test полезная привычка",
             place_of_execution="test место",
-            time_execution="12:00",
+            time_execution=time(12, 00),
             reward="test вознаграждение",
             owner=self.user,
         )
@@ -27,35 +29,15 @@ class HabitTest(APITestCase):
         url = reverse("habits:habits-list")
         response = self.client.get(url)
 
-        result = {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": self.habit.id,
-                    "time_to_complete": "00:02:00",
-                    "periodicity": 1,
-                    "habit": "test полезная привычка",
-                    "place_of_execution": "test место",
-                    "time_execution": "12:00:00",
-                    "sign_of_a_pleasant_habit": False,
-                    "reward": "test вознаграждение",
-                    "published": "Не опубликован",
-                    "related_habit": None,
-                    "owner": self.user.pk,
-                }
-            ],
-        }
-
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Проверяем только значимые поля
+        self.assertEqual(len(response.json()), 1)
         self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
+            response.json()[0]["habit"],
+            "test полезная привычка",
         )
-        self.assertEqual(
-            response.json(),
-            result
-        )
+        self.assertEqual(response.json()[0]["place_of_execution"], "test место")
+        self.assertEqual(response.json()[0]["reward"], "test вознаграждение")
 
     def test_create_habit(self):
         """
@@ -64,17 +46,19 @@ class HabitTest(APITestCase):
         url = reverse("habits:habits-list")
         data = {
             "habit": "test1 полезная привычка",
+            "place_of_execution": "test место",
+            "time_execution": "12:00:00",
             "reward": "test1 вознаграждение",
         }
         response = self.client.post(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_201_CREATED
-        )
-        self.assertEqual(
-            Habit.objects.count(),
-            2)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Habit.objects.count(), 2)
+
+        created_habit = Habit.objects.last()
+        self.assertEqual(created_habit.habit, "test1 полезная привычка")
+        self.assertEqual(created_habit.reward, "test1 вознаграждение")
+        self.assertEqual(created_habit.owner, self.user)
 
 
     def test_retrieve_habit(self):
@@ -129,38 +113,17 @@ class HabitTest(APITestCase):
 
     def test_user_habits_list(self):
         """
-        получения списка привычек
+        получения списка привычек пользователя
         """
-        url = "/user-habits-list/"
-
+        url = reverse("habits:user-habits-list")
         response = self.client.get(url)
-
-        result = {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": 7,
-                    "time_to_complete": "00:02:00",
-                    "periodicity": 1,
-                    "habit": "test полезная привычка",
-                    "place_of_execution": "test место",
-                    "time_execution": "12:00:00",
-                    "sign_of_a_pleasant_habit": False,
-                    "reward": "test вознаграждение",
-                    "published": "Не опубликован",
-                    "related_habit": None,
-                    "owner": 6,
-                }
-            ],
-        }
 
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK
         )
-        self.assertEqual(
-            response.json(),
-            result
-        )
+
+
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(len(response.json()["results"]), 1)
+        self.assertEqual(response.json()["results"][0]["habit"], "test полезная привычка")

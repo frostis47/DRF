@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.views import APIView
 from habits.models import Habit
 from habits.paginations import ViewUserHabitPagination
@@ -57,8 +57,6 @@ class HabitsViewSet(viewsets.ModelViewSet):
         Добавление владельца к Habit при создании и определенье поля send_indicator
         """
         habit = serializer.save(owner=self.request.user)
-        habit.send_indicator = habit.periodicity
-        habit.save(update_fields=["send_indicator"])
 
     def get_permissions(self):
         if self.action in ["retrieve", "update", "partial_update", "destroy"]:
@@ -70,6 +68,8 @@ class UserHabitViewSet(APIView):
     """
     Представление для получения списка всех привычек пользователя
     """
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(responses={200: HabitSerializer()})
     def get(self, request):
         habits = Habit.objects.filter(owner=request.user)
@@ -83,3 +83,4 @@ class PublishedHabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.filter(is_public=True)
     pagination_class = ViewUserHabitPagination
+    permission_classes = [IsAuthenticated]

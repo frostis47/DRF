@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from users.models import User
 
@@ -26,9 +27,9 @@ class Habit(models.Model):
         verbose_name="Время когда выполняется привычка",
         **NULLABLE
     )
-    periodicity = models.IntegerField(  # Изменили на IntegerField
-        validators=[MinValueValidator(1), MaxValueValidator(7)],  # Валидаторы
-        verbose_name="Периодичность привычки (в днях)",  # Добавили пояснение
+    periodicity = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(7)],
+        verbose_name="Периодичность привычки (в днях)",
         default=1
     )
     time_to_complete = models.DurationField(
@@ -51,7 +52,7 @@ class Habit(models.Model):
         **NULLABLE
     )
 
-    is_public = models.BooleanField( # Добавлено поле из задания
+    is_public = models.BooleanField(
         default=False,
         verbose_name='Признак публичности'
     )
@@ -64,6 +65,10 @@ class Habit(models.Model):
         **NULLABLE
     )
 
+    last_notification_date = models.DateField(
+        verbose_name="Дата последнего уведомления",
+        default=timezone.now().date()
+    )
 
     class Meta:
         verbose_name = "Привычка"
@@ -80,15 +85,10 @@ class Habit(models.Model):
         if self.related_habit and self.reward:
             raise ValidationError("Нельзя одновременно выбирать связанную привычку и указывать вознаграждение.")
 
-        if self.time_to_complete.total_seconds() > 120:
+        if self.time_to_complete and self.time_to_complete.total_seconds() > 120:
             raise ValidationError("Время выполнения должно быть не больше 120 секунд.")
-
-        if self.related_habit and not self.related_habit.sign_of_a_pleasant_habit:
-            raise ValidationError("В связанные привычки могут попадать только привычки с признаком приятной привычки.")
-
         if self.sign_of_a_pleasant_habit and (self.reward or self.related_habit):
             raise ValidationError("У приятной привычки не может быть вознаграждения или связанной привычки.")
-
         if self.periodicity < 1 or self.periodicity > 7:
             raise ValidationError("Периодичность должна быть от 1 до 7 дней.")
 

@@ -1,7 +1,8 @@
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.response import Response
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -51,10 +52,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            self.permission_classes = (AllowAny,)
+            self.permission_classes = [AllowAny]
         return super().get_permissions()
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         user = serializer.save(is_active=True)
-        user.set_password(user.password)
-        user.save(update_fields=["password",])
+        user.set_password(serializer.validated_data['password'])
+        user.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

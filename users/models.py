@@ -72,7 +72,7 @@ class User(AbstractUser):
         **NULLABLE
     )
 
-    objects = UserManager()  # Используем наш менеджер
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
