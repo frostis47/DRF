@@ -56,7 +56,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
         """
         Добавление владельца к Habit при создании и определенье поля send_indicator
         """
-        habit = serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user)
 
     def get_permissions(self):
         if self.action in ["retrieve", "update", "partial_update", "destroy"]:

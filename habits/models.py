@@ -1,10 +1,8 @@
 from datetime import timedelta
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-
 from users.models import User
 
 NULLABLE = {"null": True, "blank": True}
@@ -14,6 +12,7 @@ class Habit(models.Model):
     """
     Модель привычки
     """
+    objects = None
     habit = models.CharField(
         max_length=255,
         verbose_name="Привычка",

@@ -17,3 +17,4 @@ def send_message_to_user():
                 send_telegram_message(message=message, chat_id=habit.owner.tg_chat_id)
                 habit.send_indicator = habit.periodicity
         habit.save(update_fields=["send_indicator"])
+

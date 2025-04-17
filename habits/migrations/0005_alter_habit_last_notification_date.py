@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='habit',
             name='last_notification_date',
-            field=models.DateField(default=datetime.date(2025, 4, 15), verbose_name='Дата последнего уведомления'),
+            field=models.DateField(default=datetime.date(2025, 4, 15),
+                                   verbose_name='Дата последнего уведомления'),
         ),
     ]
+

@@ -5,13 +5,11 @@ from django.contrib.auth.models import BaseUserManager
 
 NULLABLE = {"blank": True, "null": True}
 
-
 class UserManager(BaseUserManager):
     """
     Менеджер для модели User, где email является уникальным идентификатором
     для аутентификации вместо username.
     """
-
     def create_user(self, email, password=None, **extra_fields):
         """
         Создает и возвращает пользователя с указанным email и паролем.
@@ -34,7 +32,6 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True')
 
         return self.create_user(email, password, **extra_fields)
-
 
 class User(AbstractUser):
     """

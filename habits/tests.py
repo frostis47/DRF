@@ -1,11 +1,9 @@
 from datetime import time
-
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from habits.models import Habit
 from users.models import User
-
 
 class HabitTest(APITestCase):
     """
@@ -23,21 +21,19 @@ class HabitTest(APITestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_list_habit(self):
-        """
-        Тест получения списка привычек
-        """
         url = reverse("habits:habits-list")
         response = self.client.get(url)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Проверяем только значимые поля
-        self.assertEqual(len(response.json()), 1)
-        self.assertEqual(
-            response.json()[0]["habit"],
-            "test полезная привычка",
-        )
-        self.assertEqual(response.json()[0]["place_of_execution"], "test место")
-        self.assertEqual(response.json()[0]["reward"], "test вознаграждение")
+
+        data = response.json()
+
+        self.assertIn("count", data)
+        self.assertIn("results", data)
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(len(data["results"]), 1)
+        habit_data = data["results"][0]
+        self.assertEqual(habit_data["place_of_execution"], self.habit.place_of_execution)
+        self.assertEqual(habit_data["habit"], self.habit.habit)
 
     def test_create_habit(self):
         """
@@ -49,6 +45,7 @@ class HabitTest(APITestCase):
             "place_of_execution": "test место",
             "time_execution": "12:00:00",
             "reward": "test1 вознаграждение",
+            "owner": self.user.pk
         }
         response = self.client.post(url, data)
 
@@ -59,7 +56,6 @@ class HabitTest(APITestCase):
         self.assertEqual(created_habit.habit, "test1 полезная привычка")
         self.assertEqual(created_habit.reward, "test1 вознаграждение")
         self.assertEqual(created_habit.owner, self.user)
-
 
     def test_retrieve_habit(self):
         """
@@ -83,7 +79,7 @@ class HabitTest(APITestCase):
         """
         Тест на изменения привычке
         """
-        url = reverse("habits:habits-detail", args=(self.habit.pk,))
+        url = reverse("habits:habits-detail", kwargs={"pk": self.habit.pk})
 
         data = {"habit": "test1 полезная привычка", "reward": "test вознаграждение"}
 
@@ -100,9 +96,9 @@ class HabitTest(APITestCase):
 
     def test_delete_habit(self):
         """
-        удаления привычки
+        Удаления привычки
         """
-        url = reverse("habits:habits-detail", args=(self.habit.pk,))
+        url = reverse("habits:habits-detail", kwargs={"pk": self.habit.pk})
         response = self.client.delete(url)
 
         self.assertEqual(
@@ -113,7 +109,7 @@ class HabitTest(APITestCase):
 
     def test_user_habits_list(self):
         """
-        получения списка привычек пользователя
+        Получение списка привычек пользователя
         """
         url = reverse("habits:user-habits-list")
         response = self.client.get(url)
@@ -122,8 +118,6 @@ class HabitTest(APITestCase):
             response.status_code,
             status.HTTP_200_OK
         )
-
-
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(len(response.json()["results"]), 1)
         self.assertEqual(response.json()["results"][0]["habit"], "test полезная привычка")
