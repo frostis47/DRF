@@ -13,8 +13,8 @@ def send_message_to_user():
         habit.send_indicator -= 1
         if not habit.send_indicator:
             if habit.owner.tg_chat_id:
-                message = f"У вас сегодня выполнение привычки: {habit.habit}, которую нужно выполнить в {habit.time_execution} в {habit.place_of_execution}"
+                message = (f"У вас сегодня выполнение привычки: {habit.habit}, "
+                           f"которую нужно выполнить в {habit.time_execution} в {habit.place_of_execution}")
                 send_telegram_message(message=message, chat_id=habit.owner.tg_chat_id)
                 habit.send_indicator = habit.periodicity
         habit.save(update_fields=["send_indicator"])
-

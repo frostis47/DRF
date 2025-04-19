@@ -37,4 +37,3 @@ class HabitSerializer(serializers.ModelSerializer):
             ),
             RelatedHabitValidator("related_habit"),
         ]
-

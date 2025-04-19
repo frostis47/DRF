@@ -25,63 +25,37 @@ class UserTest(APITestCase):
         response_data = response.json()
         self.assertEqual(response_data["email"], "test1@test.ru")
 
-
-
     def test_list_users(self):
-        """
-        Тест получения списка пользователей
-        """
+        """Тест получения списка пользователей"""
         url = reverse("users:users-list")
         response = self.client.get(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.json()["results"]), 1)
 
     def test_retrieve_users(self):
-        """
-        Тест получения конкретного пользователя
-        """
+        """Тест получения конкретного пользователя"""
         url = reverse("users:users-detail", kwargs={"pk": self.admin_user.pk})
         response = self.client.get(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
-        self.assertEqual(
-            response.json()["email"],
-            "admin@test.ru")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["email"], "admin@test.ru")
 
     def test_update_user(self):
         """Тест на изменения информации о пользователе"""
-        url = reverse(
-            "users:users-detail", kwargs={"pk": self.admin_user.pk})
+        url = reverse("users:users-detail", kwargs={"pk": self.admin_user.pk})
         data = {"email": "test1@test.ru"}
         response = self.client.patch(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["email"], "test1@test.ru")
         updated_user = User.objects.get(pk=self.admin_user.pk)
         self.assertEqual(updated_user.email, "test1@test.ru")
 
     def test_delete_user(self):
-        """
-        Тест удаления пользователя
-        """
+        """Тест удаления пользователя"""
         url = reverse("users:users-detail", args=(self.admin_user.pk,))
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
-        self.assertEqual(
-            User.objects.count(),
-            0
-        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(User.objects.count(), 0)

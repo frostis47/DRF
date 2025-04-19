@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from habits.models import Habit
 
@@ -17,3 +16,4 @@ class HabitAdmin(admin.ModelAdmin):
     )
     list_filter = ("sign_of_a_pleasant_habit",)
     search_fields = ("habit",)
+

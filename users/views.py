@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from users.models import User
 from users.serializers import UserSerializer
 
+
 @method_decorator(
     name="list",
     decorator=swagger_auto_schema(

@@ -30,4 +30,3 @@ class Migration(migrations.Migration):
                                     verbose_name='Связанная приятная привычка'),
         ),
     ]
-
