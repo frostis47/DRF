@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 class Habit(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Владелец")
     place = models.CharField(max_length=255, blank=True, null=True, verbose_name="Место выполнения")
