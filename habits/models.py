@@ -5,7 +5,7 @@ class Habit(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Владелец")
     place = models.CharField(max_length=255, blank=True, null=True, verbose_name="Место выполнения")
     action_time = models.TimeField(blank=True, null=True, verbose_name="Время выполнения")
-    action = models.CharField(max_length=255, default='default_value', verbose_name="Действие")  # Установлено значение по умолчанию
+    action = models.CharField(max_length=255, default='default_value', verbose_name="Действие")
     is_pleasant = models.BooleanField(default=False, verbose_name="Приятная привычка")
     associated_habit = models.ForeignKey(
         "self", on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Связанная привычка"
@@ -24,4 +24,3 @@ class Habit(models.Model):
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
-
