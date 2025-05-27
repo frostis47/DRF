@@ -1,20 +1,39 @@
+from datetime import timedelta
+
+import requests
 from celery import shared_task
+from django.utils import timezone
+
+from config import settings
 from habits.models import Habit
-from habits.services import send_telegram_message
 
 
 @shared_task
-def send_message_to_user():
-    """
-    Отправка о выполнение привычки
-    """
-    habits = Habit.objects.filter(sign_of_a_pleasant_habit=False)
-    for habit in habits:
-        habit.send_indicator -= 1
-        if not habit.send_indicator:
-            if habit.owner.tg_chat_id:
-                message = (f"У вас сегодня выполнение привычки: {habit.habit}, "
-                           f"которую нужно выполнить в {habit.time_execution} в {habit.place_of_execution}")
-                send_telegram_message(message=message, chat_id=habit.owner.tg_chat_id)
-                habit.send_indicator = habit.periodicity
-        habit.save(update_fields=["send_indicator"])
+def send_telegram_message(chat_id, message):
+    """Отправляет напоминание о выполнении привычки в Telegram."""
+    print("Hello!")
+    params = {"text": message, "chat_id": chat_id}
+    try:
+        response = requests.get(f"{settings.TELEGRAM_URL}{settings.TELEGRAM_TOKEN}/sendMessage", params=params)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending message: {e}")
+
+
+@shared_task
+def check_and_send_habit_notice():
+    """Отправляет сообщение в Telegram с указанной периодичностью."""
+    for habit in Habit.objects.filter(is_pleasant=False):
+        chat_id = habit.owner.tg_chat_id
+        message = str(habit)
+        next_notice_day = None
+        periodicity = habit.periodicity
+        if chat_id and periodicity:
+            if habit.last_notice_date:
+                next_notice_day = habit.last_notice_date + timedelta(days=periodicity)
+
+            if habit.last_notice_date is None or timezone.now() >= next_notice_day:
+                send_telegram_message.delay(chat_id, message)
+
+                habit.last_notice_date = timezone.now()
+                habit.save()
