@@ -3,6 +3,7 @@ import datetime
 import django.core.validators
 from django.db import migrations, models
 
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -16,18 +17,22 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('habit', models.CharField(max_length=255, verbose_name='Привычка')),
-                ('place_of_execution', models.CharField(blank=True, max_length=255, null=True,
-                                                        verbose_name='Место где нужно выполнять привычку')),
-                ('time_execution', models.TimeField(blank=True,
-                                                    null=True, verbose_name='Время когда выполняется привычка')),
-                ('periodicity', models.IntegerField(default=1, validators=[django.core.validators.MinValueValidator(1),
-                                                                           django.core.validators.MaxValueValidator(7)],
-                                                    verbose_name='Периодичность привычки (в днях)')),
-                ('time_to_complete', models.DurationField(default=datetime.timedelta(seconds=120),
-                                                          verbose_name='Продолжительность выполнения '
-                                                                       'привычки по времени')),
-                ('sign_of_a_pleasant_habit', models.BooleanField(default=False,
-                                                                 verbose_name='Показатель приятной привычки')),
+                ('place_of_execution', models.CharField(
+                    blank=True, max_length=255, null=True,
+                    verbose_name='Место где нужно выполнять привычку')),
+                ('time_execution', models.TimeField(
+                    blank=True, null=True, verbose_name='Время когда выполняется привычка')),
+                ('periodicity', models.IntegerField(
+                    default=1, validators=[
+                        django.core.validators.MinValueValidator(1),
+                        django.core.validators.MaxValueValidator(7)],
+                    verbose_name='Периодичность привычки (в днях)')),
+                ('time_to_complete', models.DurationField(
+                    default=datetime.timedelta(seconds=120),
+                    verbose_name='Продолжительность выполнения '
+                                 'привычки по времени')),
+                ('sign_of_a_pleasant_habit', models.BooleanField(
+                    default=False, verbose_name='Показатель приятной привычки')),
                 ('reward', models.CharField(blank=True, null=True, verbose_name='Вознаграждение за привычку')),
                 ('is_public', models.BooleanField(default=False, verbose_name='Признак публичности')),
             ],

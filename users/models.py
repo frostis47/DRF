@@ -5,6 +5,7 @@ from django.contrib.auth.models import BaseUserManager
 
 NULLABLE = {"blank": True, "null": True}
 
+
 class UserManager(BaseUserManager):
     """
     Менеджер для модели User, где email является уникальным идентификатором
