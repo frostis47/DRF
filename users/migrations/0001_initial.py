@@ -43,7 +43,8 @@ class Migration(migrations.Migration):
                 ('tg_chat_id', models.PositiveIntegerField(blank=True, null=True, verbose_name='ID чата в Telegram')),
                 ('groups', models.ManyToManyField(
                     blank=True,
-                    help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+                    help_text='The groups this user belongs to. A user will get all '
+                              'permissions granted to each of their groups.',
                     related_name='user_set',
                     related_query_name='user',
                     to='auth.group',
