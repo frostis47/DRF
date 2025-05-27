@@ -101,4 +101,3 @@ class HabitTest(APITestCase):
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(len(response.json()["results"]), 1)
         self.assertEqual(response.json()["results"][0]["habit"], "test полезная привычка")
-
