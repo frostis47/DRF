@@ -66,7 +66,7 @@ class Habit(models.Model):
 
     last_notification_date = models.DateField(
         verbose_name="Дата последнего уведомления",
-        default=timezone.now().date()
+        default=timezone.now
     )
 
     class Meta:
