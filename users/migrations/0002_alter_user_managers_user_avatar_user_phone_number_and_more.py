@@ -29,7 +29,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='email',
-            field=models.EmailField(max_length=254, unique=True, validators=[django.core.validators.EmailValidator], verbose_name='Email'),
+            field=models.EmailField(max_length=254, unique=True, validators=[django.core.validators.EmailValidator],
+                                    verbose_name='Email'),
         ),
         migrations.AlterField(
             model_name='user',
@@ -42,4 +43,3 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=150, null=True, verbose_name='Фамилия'),
         ),
     ]
-

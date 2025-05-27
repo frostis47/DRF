@@ -33,6 +33,7 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     """
     Модель пользователя
@@ -44,6 +45,7 @@ class User(AbstractUser):
         verbose_name="Email",
         validators=[EmailValidator]
     )
+
     first_name = models.CharField(
         max_length=150,
         verbose_name="Имя",
