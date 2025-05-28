@@ -1,6 +1,6 @@
 FROM python:3.13
 
-WORKDIR /drf-proj
+WORKDIR /frostis47/drf-proj
 
 
 RUN apt-get update \
