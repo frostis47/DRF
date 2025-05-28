@@ -44,7 +44,7 @@ services:
     volumes:
       - .data.cache:/data
     ports:
-      - "6380:6379"
+      - "6379:6379"
 
   celery:
     build:
