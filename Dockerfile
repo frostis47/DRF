@@ -1,6 +1,7 @@
 FROM python:3.13
 
-WORKDIR /app
+WORKDIR /drf-proj
+
 
 RUN apt-get update \
     && apt-get install -y gcc libpq-dev \
