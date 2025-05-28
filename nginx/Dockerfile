@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-RUN mkdir -p /app/static
+RUN mkdir -p /drf-proj/static
 
 COPY nginx.conf /etc/nginx/nginx.conf
 

@@ -2,7 +2,7 @@
 FROM python:3.12-slim
 
 # Устанавливаем рабочую директорию в контейнере
-WORKDIR /app
+WORKDIR /drf-proj
 
 # Устанавливаем зависимости системы
 RUN apt-get update \
@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем исходный код приложения в контейнер
 COPY . .
 
-RUN mkdir -p /app/staticfiles && chmod -R 755 /app/staticfiles
+RUN mkdir -p /drf-proj/staticfiles && chmod -R 755 /drf-proj/staticfiles
 
 EXPOSE 8000
 
