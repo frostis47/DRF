@@ -61,10 +61,11 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to server
-        run: | 
-          rsync -avz --exclude='.git' -e "ssh -o StrictHostKeyChecking=no ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+        run: |
+          rsync -avz --exclude='.git' -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'   
               cd ${{ secrets.DEPLOY_DIR }} || exit
               docker compose down || true              
               docker compose up -d   
           EOF
+  
