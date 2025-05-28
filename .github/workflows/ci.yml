@@ -46,7 +46,7 @@ jobs:
         run: python manage.py test
 
   deploy:
-    needs: [lint, test]
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -59,8 +59,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
               cd ${{ secrets.DEPLOY_DIR }}
-              sudo docker stop DRF || true
-              sudo docker rm DRF || true                            
-              sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/DRF:${{ github.sha }}
-              sudo docker run -d --name DRF -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/DRF:${{ github.sha }}
+              sudo docker stop drf-proj || true
+              sudo docker rm drf-proj || true                            
+              sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-proj:${{ github.sha }}
+              sudo docker run -d --name drf-proj -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-proj:${{ github.sha }}
           EOF
