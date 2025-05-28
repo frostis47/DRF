@@ -66,7 +66,7 @@ services:
       - .env
     command: bash -c "celery -A config.celery_config beat -l INFO"
     depends_on:
-      - drf-proj
+      - app
       - db
       - redis
 
