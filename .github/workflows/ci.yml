@@ -45,6 +45,18 @@ jobs:
       - name: Run tests
         run: python manage.py test
 
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          # Add your Docker build commands here if needed
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -64,3 +76,4 @@ jobs:
               sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf-proj:${{ github.sha }}
               sudo docker run -d --name drf-proj -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf-proj:${{ github.sha }}
           EOF
+
