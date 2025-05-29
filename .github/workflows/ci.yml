@@ -59,10 +59,10 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj1:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj1:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
 
   deploy:
     needs: build
@@ -78,8 +78,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
               cd ${{ secrets.DEPLOY_DIR }}
-              sudo docker stop drf_proj1 || true
-              sudo docker rm drf_proj1 || true                            
-              sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj1:${{ github.sha }}
-              sudo docker run -d --name drf_proj1 -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj1:${{ github.sha }}
+              sudo docker stop drf_proj || true
+              sudo docker rm drf_proj || true                            
+              sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
+              sudo docker run -d --name drf_proj -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
           EOF
