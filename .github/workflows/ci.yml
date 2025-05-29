@@ -22,13 +22,11 @@ jobs:
       - name: Run flake8
         run: flake8 .
 
-
   test:
     needs: lint
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
-
 
     steps:
       - name: Check out code
@@ -48,8 +46,8 @@ jobs:
         run: python manage.py test
 
   build:
-    runs-on: ubuntu-latest
     needs: test
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
@@ -81,5 +79,5 @@ jobs:
               sudo docker stop drf_proj || true
               sudo docker rm drf_proj || true                            
               sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
-              sudo docker run -d --name drf_proj -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
+              sudo docker run -d --name drf_proj -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/drf_proj:${{ github.sha }}
           EOF
