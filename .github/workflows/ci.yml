@@ -74,7 +74,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
               cd ${{ secrets.DEPLOY_DIR }}
               sudo docker stop drf_proj || true
               sudo docker rm drf_proj || true                            
