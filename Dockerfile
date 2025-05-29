@@ -5,7 +5,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /frostis477
 
 COPY requirements.txt /app/
 RUN pip install --upgrade pip \
