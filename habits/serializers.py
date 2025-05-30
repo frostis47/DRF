@@ -1,39 +1,40 @@
 from rest_framework import serializers
-from .models import Habit
-from .validators import (FieldFillingValidator, RelatedHabitValidator,
-                         execution_time_validator)
+
+from habits.models import Habit
+from habits.validators import validate_lead_time, validate_periodicity
 
 
 class HabitSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для модели Habit
-    """
-    time_to_complete = serializers.DurationField(
-        validators=[execution_time_validator],
-        required=False
-    )
-
     class Meta:
         model = Habit
-        fields = [
-            'id',
-            'owner',
-            'place_of_execution',
-            'time_execution',
-            'habit',
-            'sign_of_a_pleasant_habit',
-            'related_habit',
-            'periodicity',
-            'reward',
-            'time_to_complete',
-            'is_public',
-            'last_notification_date',
-        ]
-        validators = [
-            FieldFillingValidator(
-                "reward",
-                "related_habit",
-                "sign_of_a_pleasant_habit"
-            ),
-            RelatedHabitValidator("related_habit"),
-        ]
+        fields = "__all__"
+
+    def validate(self, attrs):
+        """Валидация полей привычек"""
+        is_pleasant = attrs.get("is_pleasant")
+        associated_habit = attrs.get("associated_habit")
+        reward = attrs.get("reward")
+        periodicity = attrs.get("periodicity")
+        lead_time = attrs.get("lead_time")
+
+        if is_pleasant:
+            if associated_habit:
+                raise serializers.ValidationError("Приятная привычка не может иметь связанные привычки.")
+            elif reward:
+                raise serializers.ValidationError("Приятная привычка не может иметь вознаграждение.")
+        else:
+            if associated_habit:
+                if not associated_habit.is_pleasant:
+                    raise serializers.ValidationError("Связанная привычка должна быть приятной")
+            elif associated_habit and reward:
+                raise serializers.ValidationError(
+                    "Полезная привычка не может иметь одновременно связанную привычку и вознаграждение"
+                )
+
+        if periodicity:
+            validate_periodicity(periodicity)
+
+        if lead_time:
+            validate_lead_time(lead_time)
+
+        return attrs
